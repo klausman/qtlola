@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"regexp"
@@ -11,16 +12,31 @@ import (
 	"github.com/therecipe/qt/widgets"
 )
 
+const (
+	VERSION = "0.0.2"
+)
+
 var (
 	re_comment  = regexp.MustCompile("//.*$")
 	re_loadout  = regexp.MustCompile(".*setunitloadout *(\\[[^;]+);.*")
 	re_brackets = regexp.MustCompile("[][]")
 	re_qitem    = regexp.MustCompile(`.*("[^"]+").*`)
 
+	versioninfo = fmt.Sprintf("QtLola v%s\n© 2021 Tobias Klausmann\n\nQtLola converts simple assignGear loadouts to ACE limited arsenals.\nhttps://github.com/klausman/qtlola", VERSION)
+
+	showv = flag.Bool("v", false, "Show version number and exit")
+
 	window *widgets.QMainWindow
 )
 
 func main() {
+	flag.Parse()
+
+	if *showv {
+		fmt.Println(versioninfo)
+		os.Exit(0)
+	}
+
 	// Create application
 	app := widgets.NewQApplication(len(os.Args), os.Args)
 
@@ -103,5 +119,5 @@ func getLAfromLO(s string) string {
 }
 
 func About() {
-	widgets.QMessageBox_About(window, "About", "QtLola converts simple assignGear loadouts to ACE limited arsenals.\n© 2021 Tobias Klausmann\nhttps://gtihub.com/klausman/")
+	widgets.QMessageBox_About(window, "About", versioninfo)
 }
