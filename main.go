@@ -13,12 +13,12 @@ import (
 )
 
 const (
-	VERSION = "0.0.2"
+	VERSION = "0.0.3"
 )
 
 var (
 	re_comment  = regexp.MustCompile("//.*$")
-	re_loadout  = regexp.MustCompile(".*setunitloadout *(\\[[^;]+);.*")
+	re_loadout  = regexp.MustCompile("(?i).*setunitloadout *(\\[[^;]+);.*")
 	re_brackets = regexp.MustCompile("[][]")
 	re_qitem    = regexp.MustCompile(`.*("[^"]+").*`)
 
@@ -63,13 +63,17 @@ func main() {
 	action2 := helpMenu.AddAction("About Qt")
 	action2.ConnectTriggered(func(checked bool) { app.AboutQt() })
 
-	// Create a line edit and add it to the layout
+	// Create a text edit box and add it to the layout
 	input := widgets.NewQTextEdit(nil)
 	input.SetPlaceholderText("Paste simple assignGear contents here")
+	input.SetAcceptRichText(false)
+	input.SetFontFamily("Monospace")
 	layout.AddWidget(input, 0, 0)
 
 	output := widgets.NewQTextEdit(nil)
 	output.SetPlaceholderText("Limited Arsenal SQF will appear here")
+	input.SetAcceptRichText(false)
+	input.SetFontFamily("Monospace")
 	layout.AddWidget(output, 0, 0)
 
 	// Create a button and add it to the layout
@@ -96,7 +100,7 @@ func getLAfromLO(s string) string {
 	items := make(map[string]bool)
 	for _, line := range strings.Split(s, "\n") {
 		line = strings.Trim(line, " \n\r\t")
-		line = strings.ToLower(line)
+		//line = strings.ToLower(line)
 		line = re_comment.ReplaceAllString(line, "")
 		lo := re_loadout.FindStringSubmatch(line)
 		if len(lo) == 0 {
