@@ -8,7 +8,6 @@ paste the file contents, and then produces the SQF for a limited arsenal. Paste
 that code into the `init` of a box in-game and you're done.
 
 <img src="screenshot.png" />
-![Screenshot](screenshot.png?raw=true "Screenshot")
 
 
 License: Apache License v2
