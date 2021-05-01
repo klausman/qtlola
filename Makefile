@@ -19,4 +19,4 @@ wopt: win
 	upx deploy/windows/qtlola.exe
 
 clean:
-	rm -rf windows linux deploy qtlola qtbox
+	rm -rf windows linux deploy qtlola qtbox vendor
