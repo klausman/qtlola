@@ -13,16 +13,15 @@ import (
 )
 
 const (
-	VERSION = "0.0.3"
+	version = "0.0.4"
 )
 
 var (
-	re_comment  = regexp.MustCompile("//.*$")
-	re_loadout  = regexp.MustCompile("(?i).*setunitloadout *(\\[[^;]+);.*")
-	re_brackets = regexp.MustCompile("[][]")
-	re_qitem    = regexp.MustCompile(`.*("[^"]+").*`)
+	reComment = regexp.MustCompile(`//.*$`)
+	reLoadout = regexp.MustCompile(`(?i).*setunitloadout *(\[[^;]+);.*`)
+	reQitem   = regexp.MustCompile(`.*("[^"]+").*`)
 
-	versioninfo = fmt.Sprintf("QtLola v%s\n© 2021 Tobias Klausmann\n\nQtLola converts simple assignGear loadouts to ACE limited arsenals.\nhttps://github.com/klausman/qtlola", VERSION)
+	versioninfo = fmt.Sprintf("QtLola v%s\n© 2021 Tobias Klausmann\n\nQtLola converts simple assignGear loadouts to ACE limited arsenals.\nhttps://github.com/klausman/qtlola", version)
 
 	showv = flag.Bool("v", false, "Show version number and exit")
 
@@ -59,7 +58,7 @@ func main() {
 
 	helpMenu := window.MenuBar().AddMenu2("Help")
 	action1 := helpMenu.AddAction("About QtLola")
-	action1.ConnectTriggered(func(checked bool) { About() })
+	action1.ConnectTriggered(func(checked bool) { aboutDialog() })
 	action2 := helpMenu.AddAction("About Qt")
 	action2.ConnectTriggered(func(checked bool) { app.AboutQt() })
 
@@ -100,28 +99,27 @@ func getLAfromLO(s string) string {
 	items := make(map[string]bool)
 	for _, line := range strings.Split(s, "\n") {
 		line = strings.Trim(line, " \n\r\t")
-		//line = strings.ToLower(line)
-		line = re_comment.ReplaceAllString(line, "")
-		lo := re_loadout.FindStringSubmatch(line)
+		line = reComment.ReplaceAllString(line, "")
+		lo := reLoadout.FindStringSubmatch(line)
 		if len(lo) == 0 {
 			continue
 		}
 		for _, tok := range strings.Split(lo[1], ",") {
-			stripped := re_qitem.FindStringSubmatch(tok)
+			stripped := reQitem.FindStringSubmatch(tok)
 			if len(stripped) == 0 {
 				continue
 			}
 			items[stripped[1]] = true
 		}
 	}
-	var itemlist []string
-	for k, _ := range items {
+	itemlist := make([]string, 0, len(items))
+	for k := range items {
 		itemlist = append(itemlist, k)
 	}
 	sort.Strings(itemlist)
 	return fmt.Sprintf("[this, [\n    %s]\n] call ace_arsenal_fnc_initBox;\n", strings.Join(itemlist, ",\n    "))
 }
 
-func About() {
+func aboutDialog() {
 	widgets.QMessageBox_About(window, "About", versioninfo)
 }
